@@ -7,6 +7,12 @@
 
 import UIKit
 
+struct TransactionViewModel {
+    let date: String
+    let category: String
+    let amount: Double
+}
+
 final class TransactionCellController: NSObject, UITableViewDataSource, UITableViewDelegate {
     private let viewModel: TransactionViewModel
     private var cell: TransactionCell?

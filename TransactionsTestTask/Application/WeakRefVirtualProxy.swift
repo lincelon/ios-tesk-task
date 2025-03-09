@@ -16,6 +16,14 @@ final class WeakRefVirtualProxy<T: AnyObject> {
 }
 
 extension WeakRefVirtualProxy: TransactionsView where T: TransactionsView {
+    func display(_ transactions: [Transaction]) {
+        object?.display(transactions)
+    }
+    
+    func display(_ transaction: Transaction) {
+        object?.display(transaction)
+    }
+    
     func display(_ viewModel: TransactionsViewModel) {
         object?.display(viewModel)
     }

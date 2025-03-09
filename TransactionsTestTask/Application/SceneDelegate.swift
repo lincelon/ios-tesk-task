@@ -20,7 +20,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         attributes: .concurrent
     )
     
-    private let store: BitcoinRateStore = {
+    private lazy var navController: UINavigationController = {
+        let navController = UINavigationController(rootViewController: makeTransactionsScene())
+        return navController
+    }()
+    
+    private let store: BitcoinRateStore & TransactionsStore = {
         do {
             let storeURL = NSPersistentContainer
                 .defaultDirectoryURL()
@@ -44,18 +49,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = TransactionsUIComposer.compose(
-            bitcoinRateUpdater: makeBitcoinRateUpdater
-        )
+        window?.rootViewController = navController
         window?.makeKeyAndVisible()
     }
     
-    private func makeBitcoinRateUpdater() -> AnyPublisher<BitcoinRate, Error> {
-        Publishers.Merge(
-            makeLocalBitcoinRateLoader(),
-            makeRemoteBitcoinRateLoader()
+    private func makeTransactionsScene() -> UIViewController {
+        TransactionsUIComposer.compose(
+            bitcoinRateUpdater: makeBitcoinRateUpdater,
+            depoist: showDepositScene,
+            transactionsLoader: makeTansactionsLoader
         )
-        .eraseToAnyPublisher()
+    }
+    
+    private func showDepositScene() -> AnyPublisher<Transaction, Never> {
+        let (controller, result) = DepositUIComposer.compose()
+        navController.present(controller, animated: true)
+        return result
+            .caching(to: store)
+            .eraseToAnyPublisher()
+    }
+    
+    private func makeTansactionsLoader() -> AnyPublisher<[Transaction], Error> {
+        store.loadPublisher()
+    }
+
+    private func makeBitcoinRateUpdater() -> AnyPublisher<BitcoinRate, Error> {
+        makeLocalBitcoinRateLoader()
+            .merge(with: makeRemoteBitcoinRateLoader())
+            .eraseToAnyPublisher()
     }
     
     private func makeRemoteBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
@@ -73,37 +94,77 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func makeLocalBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
         store.loadPublisher()
+    }
+}
 
+final class DepositPresentationAdapter {
+    private let resultSubject = PassthroughSubject<Transaction, Never>()
+
+    var result: AnyPublisher<Transaction, Never> {
+        resultSubject.eraseToAnyPublisher()
+    }
+    
+    func didRecieveDeposit(_ amount: String) {
+        guard
+            let amount = Double(amount),
+            amount > 0
+        else { return }
+        let transaction = DepositPresenter.map(amount)
+        resultSubject.send(transaction)
+    }
+}
+
+enum DepositUIComposer {
+    static func compose() -> (controller: UIAlertController, result: AnyPublisher<Transaction, Never>) {
+        let presentationAdapter = DepositPresentationAdapter()
+        let controller = UIAlertController.withTextField(
+            title: DepositPresenter.title,
+            message: DepositPresenter.message,
+            placeholder: DepositPresenter.placeholder,
+            cancelTitle: DepositPresenter.cancelButtonTitle,
+            cancelAction: { },
+            primaryTitle: DepositPresenter.receiveButtonTitle,
+            primaryAction: presentationAdapter.didRecieveDeposit
+        )
+        return (controller, presentationAdapter.result)
     }
 }
 
 enum TransactionsUIComposer {
     static func compose(
-        bitcoinRateUpdater: @escaping () -> AnyPublisher<BitcoinRate, Error>
+        bitcoinRateUpdater: @escaping () -> AnyPublisher<BitcoinRate, Error>,
+        depoist: @escaping () -> AnyPublisher<Transaction, Never>,
+        transactionsLoader: @escaping () -> AnyPublisher<[Transaction], Error>
     ) -> TransactionsViewController {
-        let transactionPresentationAdapter = TransactionsPresentationAdapter(
-            bitcoinRateUpdater: bitcoinRateUpdater
+        let presentationAdapter = TransactionsPresentationAdapter(
+            depoist: depoist,
+            bitcoinRateUpdater: bitcoinRateUpdater,
+            transactionsLoader: transactionsLoader
         )
         let controller = TransactionsViewController(
-            delegate: transactionPresentationAdapter
+            delegate: presentationAdapter
         )
-        let presenter = TransactionsPresenter(
-            view: WeakRefVirtualProxy(controller)
+        presentationAdapter.presenter = TransactionsPresenter(
+            view: TransactionsViewAdapter(
+                controller: controller
+            )
         )
-        transactionPresentationAdapter.presenter = presenter
         return controller
     }
 }
 
-import Combine
-
 final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate {
     var presenter: TransactionsPresenter?
     private var cancellables: Set<AnyCancellable> = []
+    private let depoist: () -> AnyPublisher<Transaction, Never>
     
     init(
-        bitcoinRateUpdater: () -> AnyPublisher<Double, Error>
+        depoist: @escaping () -> AnyPublisher<Transaction, Never>,
+        bitcoinRateUpdater: () -> AnyPublisher<BitcoinRate, Error>,
+        transactionsLoader: () -> AnyPublisher<[Transaction], Error>
     ) {
+        self.depoist = depoist
+        
         bitcoinRateUpdater()
             .receive(on: DispatchQueue.main)
             .sink(
@@ -113,7 +174,23 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
                     }
                 },
                 receiveValue: { [unowned self] in
-                    presenter?.didUpdateBitcounRate(rate: $0)
+                    presenter?.didUpdateBitcounRate(with: $0)
+                }
+            )
+            .store(in: &cancellables)
+        
+        transactionsLoader()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [unowned self] in
+                    if case let .failure(error) = $0 {
+                        print(error)
+                    }
+                },
+                receiveValue: { [unowned self] in
+                    if !$0.isEmpty {
+                        presenter?.didLoadTransactions($0)
+                    }
                 }
             )
             .store(in: &cancellables)
@@ -124,18 +201,64 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
     }
     
     func didTapDepositButton() {
-        
+        depoist()
+            .sink { [unowned self] in
+                presenter?.didRecieveTransaction($0)
+            }
+            .store(in: &cancellables)
     }
 }
 
-extension Publisher {
-    func executePeriodically(every interval: TimeInterval, on runLoop: RunLoop = .current) -> AnyPublisher<Output, Failure> {
-        Timer.publish(every: interval, on: runLoop, in: .common)
-            .autoconnect()
-            .merge(with: Just(Date.now))
-            .flatMap(maxPublishers: .max(1)) { _ in
-                self
+
+import Combine
+
+final class TransactionsViewAdapter: TransactionsView {
+    weak var controller: TransactionsViewController?
+    private var currentTransactions: [Transaction: TransactionCellController]
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init(
+        controller: TransactionsViewController,
+        currentTransactions: [Transaction: TransactionCellController] = [:]
+    ) {
+        self.controller = controller
+        self.currentTransactions = currentTransactions
+
+    }
+    
+    func display(_ viewModel: TransactionsViewModel) {
+
+    }
+    
+    func display(_ transaction: Transaction) {
+        guard let controller else { return }
+        let cellController = TransactionCellController(
+            viewModel: .init(date: "14:34:55", category: transaction.category.rawValue, amount: transaction.amount)
+        )
+        currentTransactions[transaction] = cellController
+        let section = TransactionsSection(date: .now, items: currentTransactions.map(\.value))
+        controller.display([section])
+    }
+    
+    func display(_ transactions: [Transaction]) {
+        guard let controller else { return }
+        var currentTransactions = currentTransactions
+        let transactions: [TransactionCellController] = transactions.map { model in
+            if let controller = currentTransactions[model] {
+                return controller
             }
-            .eraseToAnyPublisher()
+            let cellController = TransactionCellController(
+                viewModel: .init(date: "14:34:55", category: model.category.rawValue, amount: model.amount)
+            )
+            currentTransactions[model] = cellController
+            return cellController
+        }
+        self.currentTransactions = currentTransactions
+        let section = TransactionsSection(date: .now, items: transactions)
+        controller.display([section])
+    }
+    
+    func display(_ formattedBitcoinRate: String) {
+        
     }
 }

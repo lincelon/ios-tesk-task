@@ -5,18 +5,16 @@
 //  Created by Maksym Soroka on 07.03.2025.
 //
 
+import Foundation
+
 struct TransactionsViewModel {
     let balance: Double
 }
 
-struct TransactionViewModel {
-    let date: String
-    let category: String
-    let amount: Double
-}
-
 protocol TransactionsView {
     func display(_ viewModel: TransactionsViewModel)
+    func display(_ transactions: [Transaction])
+    func display(_ transaction: Transaction)
     func display(_ formattedBitcoinRate: String)
 }
 
@@ -29,8 +27,16 @@ final class TransactionsPresenter {
         self.view = view
     }
     
-    func didUpdateBitcounRate(rate: Double) {
+    func didUpdateBitcounRate(with rate: Double) {
         let formattedRate = "1 BTC – $\(String(format: "%.2f", rate))"
         view.display(formattedRate)
+    }
+    
+    func didLoadTransactions(_ transactions: [Transaction]) {
+        view.display(transactions)
+    }
+    
+    func didRecieveTransaction(_ transaction: Transaction) {
+        view.display(transaction)
     }
 }

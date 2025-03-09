@@ -51,6 +51,33 @@ extension BitcoinRateStore {
     }
 }
 
+extension TransactionsStore {
+    typealias Publisher = AnyPublisher<[Transaction], Error>
+    
+    func loadPublisher() -> Publisher {
+        Deferred {
+            Future { completion in
+                completion(
+                    Result {
+                        try self.retrieve()
+                    }
+                )
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+    func caching(to cache: TransactionsStore) -> AnyPublisher<Output, Failure> where Output == Transaction {
+        handleEvents(
+            receiveOutput: {
+                try? cache.insert($0)
+            }
+        ).eraseToAnyPublisher()
+    }
+}
+
 extension Publisher {
     func caching(to cache: BitcoinRateStore) -> AnyPublisher<Output, Failure> where Output == BitcoinRate {
         handleEvents(
@@ -58,5 +85,17 @@ extension Publisher {
                 try? cache.save($0)
             }
         ).eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+    func executePeriodically(every interval: TimeInterval, on runLoop: RunLoop = .current) -> AnyPublisher<Output, Failure> {
+        Timer.publish(every: interval, on: runLoop, in: .common)
+            .autoconnect()
+            .merge(with: Just(Date.now))
+            .flatMap(maxPublishers: .max(1)) { _ in
+                self
+            }
+            .eraseToAnyPublisher()
     }
 }

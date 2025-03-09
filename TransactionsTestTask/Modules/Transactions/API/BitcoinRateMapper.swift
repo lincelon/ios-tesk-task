@@ -28,7 +28,6 @@ enum BitcoinRateMapper {
         guard isOK(response), let root = try? JSONDecoder().decode(Root.self, from: data) else {
             throw Error.invalidData
         }
-        print(root.bitcoinRate)
         return root.bitcoinRate
     }
 }

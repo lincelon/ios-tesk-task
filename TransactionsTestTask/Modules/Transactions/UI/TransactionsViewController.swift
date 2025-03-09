@@ -23,22 +23,45 @@ final class TransactionsViewController: NiblessViewController {
         view.register(TransactionCell.self)
         view.alwaysBounceVertical = false
         view.allowsSelection = false
+        view.backgroundColor = .white
         return view
     }()
-       
-    private let balanceLabel: UILabel = {
+    
+    private let bitcoinRateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 30, weight: .bold)
+        label.font = .systemFont(ofSize: 18, weight: .medium)
         label.textColor = .black
-        label.text = "8000000 BTC"
+        return label
+    }()
+    
+    private let yourBTCBalanceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Your BTC Balance"
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 28, weight: .heavy)
+        return label
+    }()
+    
+    private let balanceAmountLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.textAlignment = .center
+        label.text = "4003.21"
+        label.font = .systemFont(ofSize: 24, weight: .bold)
         return label
     }()
     
     private let depositButton: UIButton = {
         var configuration = UIButton.Configuration.plain()
         configuration.image = UIImage(systemName: "plus.circle.fill")
-        configuration.buttonSize = .medium
         let button = UIButton(configuration: configuration)
+        return button
+    }()
+    
+    private let addTransactionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Add Transaction", for: .normal)
         return button
     }()
     
@@ -50,26 +73,37 @@ final class TransactionsViewController: NiblessViewController {
         self.delegate = delegate
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        display([.init(date: Date(), items: [.init(viewModel: .init(date: "1", category: "1", amount: 1))])])
+        depositButton.addTarget(self, action: #selector(didTapDepositButton), for: .touchUpInside)
+    }
+    
+    @objc
+    func didTapDepositButton() {
+        delegate?.didTapDepositButton()
     }
     
     private func setupViews() {
-        view.backgroundColor = .red
+        view.backgroundColor = .white
+        let bitcoinRateStackView = UIHorizontalStackView(
+            arrangedSubviews: [bitcoinRateLabel]
+        ).withHorizonalAlignmnet(.trailing)
         let balanceAndDepositStackView = UIHorizontalStackView(
             arrangedSubviews: [
-                balanceLabel,
+                balanceAmountLabel,
                 depositButton
             ]
-        ).withHorizonalAlignmnet(.leading)
+        ).withHorizonalAlignmnet(.center)
         let descriptionStackView = UIVerticalStackView(
             arrangedSubviews: [
-                balanceAndDepositStackView
+                bitcoinRateStackView,
+                yourBTCBalanceLabel,
+                balanceAndDepositStackView,
+                addTransactionButton
             ]
         )
+        descriptionStackView.spacing = 16
         let mainStackView = UIVerticalStackView(
             arrangedSubviews: [
                 descriptionStackView,
@@ -108,16 +142,6 @@ extension TransactionsViewController: UICollectionViewDelegate {
         forItemAt indexPath: IndexPath
     ) {
         
-    }
-}
-
-extension TransactionsViewController: TransactionsView {
-    func display(_ viewModel: TransactionsViewModel) {
-        
-    }
-    
-    func display(_ formattedBitcoinRate: String) {
-        balanceLabel.text = formattedBitcoinRate
     }
 }
 
