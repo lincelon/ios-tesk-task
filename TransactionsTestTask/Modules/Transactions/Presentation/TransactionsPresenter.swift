@@ -30,7 +30,7 @@ final class TransactionsPresenter {
     }
     
     func didUpdateBitcounRate(rate: Double) {
-        let formattedRate = String(rate)
+        let formattedRate = "1 BTC – $\(String(format: "%.2f", rate))"
         view.display(formattedRate)
     }
 }

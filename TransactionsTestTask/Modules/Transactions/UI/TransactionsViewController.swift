@@ -115,6 +115,10 @@ extension TransactionsViewController: TransactionsView {
     func display(_ viewModel: TransactionsViewModel) {
         
     }
+    
+    func display(_ formattedBitcoinRate: String) {
+        balanceLabel.text = formattedBitcoinRate
+    }
 }
 
 #Preview {
