@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -119,6 +119,10 @@
 		82E91CDF2D7B799F00C37DBB /* CombineHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineHelpers.swift; sourceTree = "<group>"; };
 		82E91CF62D7B9F7E00C37DBB /* NullStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		8284BF272D7E51D800036350 /* Scenes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scenes; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1CA3B64F2D22B0F500176711 /* Frameworks */ = {
@@ -355,6 +359,7 @@
 		82AFEC8D2D7B0BFB006CF875 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				8284BF272D7E51D800036350 /* Scenes */,
 				1CA3B6552D22B0F500176711 /* AppDelegate.swift */,
 				1CA3B6572D22B0F500176711 /* SceneDelegate.swift */,
 				82E91CF62D7B9F7E00C37DBB /* NullStore.swift */,
@@ -444,6 +449,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8284BF272D7E51D800036350 /* Scenes */,
 			);
 			name = TransactionsTestTask;
 			productName = TransactionsTestTask;
