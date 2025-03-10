@@ -16,7 +16,7 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
     init(
         depoist: @escaping () -> AnyPublisher<Transaction, Never>,
         bitcoinRateUpdater: () -> AnyPublisher<BitcoinRate, Error>,
-        transactionsLoader: () -> AnyPublisher<[Transaction], Error>
+        transactionsLoader: (Int) -> AnyPublisher<Paginated<Transaction>, Error>
     ) {
         self.depoist = depoist
         
@@ -34,7 +34,7 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
             )
             .store(in: &cancellables)
         
-        transactionsLoader()
+        transactionsLoader(.zero)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [unowned self] in
@@ -43,7 +43,7 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
                     }
                 },
                 receiveValue: { [unowned self] in
-                    if !$0.isEmpty {
+                    if !$0.items.isEmpty {
                         presenter?.didLoadTransactions($0)
                     }
                 }

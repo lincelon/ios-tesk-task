@@ -30,8 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         do {
             let storeURL = NSPersistentContainer
                 .defaultDirectoryURL()
-                   .appendingPathComponent("feed-store.sqlite")
-            
+                .appendingPathComponent("feed-store.sqlite")
             return try CoreDataTransactionsStore(
                 storeURL: storeURL
             )
@@ -41,7 +40,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }()
     
-//    private lazy var localBitcoinRateLoader = LocalBitcoinRateLoader(store: store)
+    private lazy var localTransactionsLoader = LocalTransactionsLoader(store: store)
     
     func scene(
         _ scene: UIScene,
@@ -72,10 +71,21 @@ private extension SceneDelegate {
             .eraseToAnyPublisher()
     }
     
-    func makeTansactionsLoader() -> AnyPublisher<[Transaction], Error> {
-        store.loadPublisher()
+    func makeTansactionsLoader(offset: Int = .zero) -> AnyPublisher<Paginated<Transaction>, Error> {
+        localTransactionsLoader.loadPublisher(offset: offset)
+            .map { transactions, isThereNextPage in
+                self.makePage(items: transactions, nextPage: isThereNextPage)
+            }
+            .eraseToAnyPublisher()
     }
-
+    
+    func makePage(items: [Transaction], nextPage: Bool) -> Paginated<Transaction> {
+        Paginated(
+            items: items,
+            loadMorePublisher: nextPage ? { self.makeTansactionsLoader(offset: $0) } : nil
+        )
+    }
+    
     func makeBitcoinRateUpdater() -> AnyPublisher<BitcoinRate, Error> {
         makeLocalBitcoinRateLoader()
             .merge(with: makeRemoteBitcoinRateLoader())

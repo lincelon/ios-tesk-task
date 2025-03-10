@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class TransactionsDiffableTableDataSource: UITableViewDiffableDataSource<TransactionsSection, TransactionCellController> {
+final class TransactionsDiffableTableDataSource: UITableViewDiffableDataSource<TransactionsSection, CellController> {
     init(tableView: UITableView) {
         super.init(tableView: tableView) { tableView, indexPath, cellController in
-            cellController.tableView(tableView, cellForRowAt: indexPath)
+            cellController.dataSource.tableView(tableView, cellForRowAt: indexPath)
         }
     }
     
@@ -19,7 +19,11 @@ final class TransactionsDiffableTableDataSource: UITableViewDiffableDataSource<T
         guard snapshot.sectionIdentifiers.indices.contains(section) else {
             return nil
         }
-        let date = snapshot.sectionIdentifiers[section].date
-        return date.formatted(date: .abbreviated, time: .omitted)
+        switch snapshot.sectionIdentifiers[section].kind {
+        case let .regular(date):
+            return date.formatted(date: .abbreviated, time: .omitted)
+        case .loadMore:
+            return nil
+        }
     }
 }

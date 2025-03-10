@@ -8,6 +8,47 @@
 import Combine
 import Foundation
 
+extension Paginated {
+    init(
+        items: [Item],
+        loadMorePublisher: ((Int) -> AnyPublisher<Self, Error>)?
+    ) {
+        self.init(
+            items: items,
+            loadMore: loadMorePublisher.map { publisher in
+                { offset, completion in
+                    publisher(offset)
+                        .subscribe(
+                            Subscribers.Sink(
+                                receiveCompletion: { result in
+                                    if case let .failure(error) = result {
+                                        completion(.failure(error))
+                                    }
+                                }, receiveValue: { result in
+                                    completion(.success(result))
+                                }
+                            )
+                        )
+                }
+            }
+        )
+    }
+    
+    var loadMorePublisher: ((Int) -> AnyPublisher<Self, Error>)? {
+        guard let loadMore = loadMore else { return nil }
+        
+        return { offset in
+            Deferred {
+                Future { completion in
+                    loadMore(offset, completion)
+                }
+            }
+            .eraseToAnyPublisher()
+        }
+    }
+}
+
+
 extension HTTPClient {
     typealias Publisher = AnyPublisher<(data: Data, response: HTTPURLResponse), Error>
     
@@ -51,15 +92,32 @@ extension BitcoinRateStore {
     }
 }
 
-extension TransactionsStore {
-    typealias Publisher = AnyPublisher<[Transaction], Error>
+extension LocalTransactionsLoader {
+    typealias Publisher = AnyPublisher<(items: [Transaction], nextPage: Bool), Error>
     
-    func loadPublisher() -> Publisher {
+    func loadPublisher(offset: Int) -> Publisher {
         Deferred {
             Future { completion in
                 completion(
                     Result {
-                        try self.retrieve()
+                        try self.load(offset: offset)
+                    }
+                )
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
+extension TransactionsStore {
+    typealias Publisher = AnyPublisher<[Transaction], Error>
+    
+    func loadPublisher(offset: Int, limit: Int) -> Publisher {
+        Deferred {
+            Future { completion in
+                completion(
+                    Result {
+                        try self.retrieve(offset: offset, limit: limit)
                     }
                 )
             }

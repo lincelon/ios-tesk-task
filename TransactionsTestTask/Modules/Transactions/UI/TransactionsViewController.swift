@@ -12,8 +12,13 @@ protocol TransactionsViewControllerDelegate {
 }
 
 struct TransactionsSection: Hashable {
-    let date: Date
-    let items: [TransactionCellController]
+    let kind: Kind
+    let items: [CellController]
+    
+    enum Kind: Hashable {
+        case regular(date: Date)
+        case loadMore
+    }
 }
 
 final class TransactionsViewController: NiblessViewController {
@@ -21,9 +26,10 @@ final class TransactionsViewController: NiblessViewController {
         let view = UITableView(frame: .zero, style: .insetGrouped)
         view.rowHeight = UITableView.automaticDimension
         view.register(TransactionCell.self)
+        view.register(LoadMoreCell.self)
         view.alwaysBounceVertical = false
         view.allowsSelection = false
-        view.backgroundColor = .white
+        view.backgroundColor = .systemGray6
         return view
     }()
     
@@ -86,6 +92,7 @@ final class TransactionsViewController: NiblessViewController {
     
     private func setupViews() {
         view.backgroundColor = .white
+        tableView.delegate = self
         let bitcoinRateStackView = UIHorizontalStackView(
             arrangedSubviews: [bitcoinRateLabel]
         ).withHorizonalAlignmnet(.trailing)
@@ -121,31 +128,39 @@ final class TransactionsViewController: NiblessViewController {
         )
     }
     
-    private func cellController(at indexPath: IndexPath) -> TransactionCellController? {
+    private func cellController(at indexPath: IndexPath) -> CellController? {
         dataSource.itemIdentifier(for: indexPath)
     }
     
     func display(_ sections: [TransactionsSection]) {
-        var snapshot = NSDiffableDataSourceSnapshot<TransactionsSection, TransactionCellController>()
+        var snapshot = NSDiffableDataSourceSnapshot<TransactionsSection, CellController>()
         sections.forEach { section in
             snapshot.appendSections([section])
             snapshot.appendItems(section.items, toSection: section)
         }
         dataSource.apply(snapshot, animatingDifferences: false)
     }
-}
-
-extension TransactionsViewController: UICollectionViewDelegate {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
+    
+    func insert(
+        _ item: CellController,
+        beforeItem: CellController
     ) {
-        
+        var snapshot = dataSource.snapshot()
+        snapshot.insertItems([item], beforeItem: beforeItem)
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+
+    func insert(_ section: TransactionsSection) {
+    
     }
 }
 
-#Preview {
-    TransactionsViewController()
+extension TransactionsViewController: UITableViewDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        willDisplay cell: UITableViewCell,
+        forRowAt indexPath: IndexPath
+    ) {
+        cellController(at: indexPath)?.delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
+    }
 }
-

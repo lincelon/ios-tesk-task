@@ -8,7 +8,7 @@
 import UIKit
 
 struct TransactionViewModel {
-    let date: String
+    let date: Date
     let category: String
     let amount: Double
 }

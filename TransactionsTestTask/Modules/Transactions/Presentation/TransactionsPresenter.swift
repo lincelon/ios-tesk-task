@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct TransactionsViewModel {
-    let balance: Double
+enum Insertion {
+    case prepend
+    case append
 }
 
 protocol TransactionsView {
-    func display(_ viewModel: TransactionsViewModel)
-    func display(_ transactions: [Transaction])
+    func display(_ transactions: Paginated<Transaction>, insertion: Insertion)
     func display(_ transaction: Transaction)
     func display(_ formattedBitcoinRate: String)
 }
@@ -21,9 +21,7 @@ protocol TransactionsView {
 final class TransactionsPresenter {
     private let view: TransactionsView
 
-    init(
-        view: TransactionsView
-    ) {
+    init(view: TransactionsView) {
         self.view = view
     }
     
@@ -32,8 +30,8 @@ final class TransactionsPresenter {
         view.display(formattedRate)
     }
     
-    func didLoadTransactions(_ transactions: [Transaction]) {
-        view.display(transactions)
+    func didLoadTransactions(_ transactions: Paginated<Transaction>) {
+        view.display(transactions, insertion: .append)
     }
     
     func didRecieveTransaction(_ transaction: Transaction) {

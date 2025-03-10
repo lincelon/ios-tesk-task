@@ -30,6 +30,13 @@ final class TransactionCell: UITableViewCell {
                 titleLabel
             ]
         )
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = .init(
+            top: 16,
+            left: 16,
+            bottom: 16,
+            right: 16
+        )
         addSubview(stackView)
         NSLayoutConstraint.activate(
             [

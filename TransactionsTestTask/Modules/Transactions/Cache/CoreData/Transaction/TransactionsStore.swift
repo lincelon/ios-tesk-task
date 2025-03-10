@@ -7,5 +7,6 @@
 
 protocol TransactionsStore {
     func insert(_ transaction: Transaction) throws
-    func retrieve() throws -> [Transaction]
+    func retrieve(offset: Int, limit: Int) throws -> [Transaction]
+    func count() throws -> Int
 }

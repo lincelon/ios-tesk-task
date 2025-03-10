@@ -20,10 +20,10 @@ extension CoreDataTransactionsStore: TransactionsStore {
         }
     }
     
-    func retrieve() throws -> [Transaction] {
+    func retrieve(offset: Int, limit: Int) throws -> [Transaction] {
         try performSync { context in
             Result {
-                try ManagedTransaction.find(in: context).compactMap {
+                try ManagedTransaction.find(in: context, offset: offset, limit: limit).compactMap {
                     guard let category = Transaction.Category(rawValue: $0.category) else {
                         return nil
                     }
@@ -33,6 +33,14 @@ extension CoreDataTransactionsStore: TransactionsStore {
                         category: category
                     )
                 }
+            }
+        }
+    }
+    
+    func count() throws -> Int {
+        try performSync { context in
+            Result {
+                try ManagedTransaction.count(in: context)
             }
         }
     }

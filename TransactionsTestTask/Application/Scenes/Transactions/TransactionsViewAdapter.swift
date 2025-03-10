@@ -6,54 +6,104 @@
 //
 
 import Combine
+import Foundation
 
 final class TransactionsViewAdapter: TransactionsView {
     weak var controller: TransactionsViewController?
-    private var currentTransactions: [Transaction: TransactionCellController]
+    private var currentSections: [TransactionsSection]
+    private var currentLoadMore: ((Int, @escaping Paginated<Transaction>.LoadMoreCompletion) -> Void)?
     private var cancellables: Set<AnyCancellable> = []
     
     init(
         controller: TransactionsViewController,
-        currentTransactions: [Transaction: TransactionCellController] = [:]
+        currentSections: [TransactionsSection] = []
     ) {
         self.controller = controller
-        self.currentTransactions = currentTransactions
-
-    }
-    
-    func display(_ viewModel: TransactionsViewModel) {
-
+        self.currentSections = currentSections
     }
     
     func display(_ transaction: Transaction) {
-        guard let controller else { return }
-        let cellController = TransactionCellController(
-            viewModel: .init(date: "14:34:55", category: transaction.category.rawValue, amount: transaction.amount)
+        let paginated = Paginated(
+            items: [transaction],
+            loadMore: currentLoadMore
         )
-        currentTransactions[transaction] = cellController
-        let section = TransactionsSection(date: .now, items: currentTransactions.map(\.value))
-        controller.display([section])
+        display(paginated, insertion: .prepend)
     }
     
-    func display(_ transactions: [Transaction]) {
+    func display(_ transactions: Paginated<Transaction>, insertion: Insertion) {
         guard let controller else { return }
-        var currentTransactions = currentTransactions
-        let transactions: [TransactionCellController] = transactions.map { model in
-            if let controller = currentTransactions[model] {
-                return controller
-            }
-            let cellController = TransactionCellController(
-                viewModel: .init(date: "14:34:55", category: model.category.rawValue, amount: model.amount)
+        
+        let cellControllers = transactions.items.map { transaction in
+             let view = TransactionCellController(
+                viewModel: .init(
+                    date: transaction.date,
+                    category: transaction.category.rawValue,
+                    amount: transaction.amount
+                )
             )
-            currentTransactions[model] = cellController
+            let cellController = CellController(id: transaction, view)
             return cellController
         }
-        self.currentTransactions = currentTransactions
-        let section = TransactionsSection(date: .now, items: transactions)
-        controller.display([section])
+        
+        var currentCellControllers: [CellController] = currentSections.flatMap(\.items)
+        
+        switch insertion {
+        case .prepend:
+            currentCellControllers.insert(contentsOf: cellControllers, at: 0)
+        case .append:
+            currentCellControllers.append(contentsOf: cellControllers)
+        }
+        
+        var sections: [TransactionsSection] = group(currentCellControllers)
+        currentSections = sections
+        
+        guard let loadMorePublisher = transactions.loadMorePublisher else {
+            controller.display(sections)
+            currentLoadMore = nil
+            return
+        }
+        currentLoadMore = transactions.loadMore
+        
+        let loadMore = LoadMoreCellController(
+            callback: { [offset = currentCellControllers.count, weak self] in
+                guard let self else { return }
+                
+                loadMorePublisher(offset)
+                    .receive(on: DispatchQueue.main)
+                    .sink(
+                        receiveCompletion: { _ in },
+                        receiveValue: {
+                            self.display($0, insertion: .append)
+                        }
+                    )
+                    .store(in: &cancellables)
+            }
+        )
+        
+        let loadMoreSection = TransactionsSection(
+            kind: .loadMore,
+            items: [CellController(id: UUID(), loadMore)]
+        )
+        sections.append(loadMoreSection)
+        controller.display(sections)
     }
-    
+        
     func display(_ formattedBitcoinRate: String) {
         
     }
+    
+    private func group(_ cellControllers : [CellController]) -> [TransactionsSection] {
+        let calendar = Calendar.current
+        let dateComponents: Set<Calendar.Component> = [.day, .year, .month]
+        let grouped = Dictionary(grouping: cellControllers) { cellController -> Date in
+            if let transactionDate = (cellController.id as? Transaction)?.date {
+                let components = calendar.dateComponents(dateComponents, from: transactionDate)
+                return calendar.date(from: components)!
+            }
+            return Date()
+        }
+        return grouped.map { .init(kind: .regular(date: $0), items: $1)}
+    }
 }
+
+

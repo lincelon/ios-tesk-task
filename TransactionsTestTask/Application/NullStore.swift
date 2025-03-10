@@ -13,6 +13,7 @@ extension NullStore: BitcoinRateStore {
 }
 
 extension NullStore: TransactionsStore {
+    func retrieve(offset: Int, limit: Int) throws -> [Transaction] { [] }
+    func count() throws -> Int { .zero }
     func insert(_ transaction: Transaction) throws { }
-    func retrieve() throws -> [Transaction] { [] }
 }
