@@ -33,7 +33,7 @@ enum ServicesAssembler {
     // MARK: - AnalyticsService
     
     static let analyticsService: PerformOnce<AnalyticsService> = {
-        let service = AnalyticsServiceImpl()
+        let service = AnalyticsServiceImp()
         
         return { service }
     }()

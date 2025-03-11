@@ -14,7 +14,7 @@
 		0DF1D1472D22DD4A001626E7 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DF1D1462D22DD44001626E7 /* AnalyticsService.swift */; };
 		1CA3B6562D22B0F500176711 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B6552D22B0F500176711 /* AppDelegate.swift */; };
 		1CA3B6582D22B0F500176711 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B6572D22B0F500176711 /* SceneDelegate.swift */; };
-		1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */; };
+		1CA3B6702D22B0F600176711 /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA3B66F2D22B0F600176711 /* AnalyticsServiceTests.swift */; };
 		820CEBCA2D7B370A00D5C8A3 /* UIStackView+Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820CEBC82D7B370A00D5C8A3 /* UIStackView+Alignment.swift */; };
 		820CEBCE2D7B370A00D5C8A3 /* UIHorizontalStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820CEBCB2D7B370A00D5C8A3 /* UIHorizontalStackView.swift */; };
 		820CEBCF2D7B370A00D5C8A3 /* UIVerticalStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820CEBCC2D7B370A00D5C8A3 /* UIVerticalStackView.swift */; };
@@ -29,7 +29,6 @@
 		822B33D52D7BA75400C0E17E /* BitcoinRateMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822B33D22D7BA75400C0E17E /* BitcoinRateMapper.swift */; };
 		822B33D82D7BA75B00C0E17E /* BitcoinRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822B33D62D7BA75B00C0E17E /* BitcoinRate.swift */; };
 		8284BF072D7E3B7400036350 /* BitcoinRateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BEF72D7E3B7400036350 /* BitcoinRateStore.swift */; };
-		8284BF082D7E3B7400036350 /* LocalBitcoinRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BEF82D7E3B7400036350 /* LocalBitcoinRate.swift */; };
 		8284BF092D7E3B7400036350 /* LocalBitcoinRateLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BEF92D7E3B7400036350 /* LocalBitcoinRateLoader.swift */; };
 		8284BF0A2D7E3B7400036350 /* TransactionsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BEFB2D7E3B7400036350 /* TransactionsStore.swift */; };
 		8284BF0B2D7E3B7400036350 /* CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BEFD2D7E3B7400036350 /* CoreDataHelpers.swift */; };
@@ -58,6 +57,9 @@
 		8284BF6D2D7FB23100036350 /* TransactionsUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF642D7FB23100036350 /* TransactionsUIComposer.swift */; };
 		8284BF6E2D7FB23100036350 /* TransactionsViewAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF652D7FB23100036350 /* TransactionsViewAdapter.swift */; };
 		8284BF702D80226C00036350 /* TransactionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF6F2D80226C00036350 /* TransactionSection.swift */; };
+		8284BF722D8025DF00036350 /* BalanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF712D8025DF00036350 /* BalanceStore.swift */; };
+		8284BF762D8026C200036350 /* Balance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF752D8026C200036350 /* Balance.swift */; };
+		8284BF782D8026FB00036350 /* CoreDataTransactionsStore+BalanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF772D8026FB00036350 /* CoreDataTransactionsStore+BalanceStore.swift */; };
 		82AFEC992D7B0C3C006CF875 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC952D7B0C3C006CF875 /* Assets.xcassets */; };
 		82AFEC9A2D7B0C3C006CF875 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC972D7B0C3C006CF875 /* LaunchScreen.storyboard */; };
 		82AFEC9B2D7B0C3C006CF875 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC962D7B0C3C006CF875 /* Base */; };
@@ -94,7 +96,7 @@
 		1CA3B6552D22B0F500176711 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CA3B6572D22B0F500176711 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		1CA3B66B2D22B0F600176711 /* TransactionsTestTaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsTestTaskTests.swift; sourceTree = "<group>"; };
+		1CA3B66F2D22B0F600176711 /* AnalyticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
 		1CA3B6752D22B0F600176711 /* TransactionsTestTaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TransactionsTestTaskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		820CEBC82D7B370A00D5C8A3 /* UIStackView+Alignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Alignment.swift"; sourceTree = "<group>"; };
 		820CEBCB2D7B370A00D5C8A3 /* UIHorizontalStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHorizontalStackView.swift; sourceTree = "<group>"; };
@@ -110,7 +112,6 @@
 		822B33D22D7BA75400C0E17E /* BitcoinRateMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRateMapper.swift; sourceTree = "<group>"; };
 		822B33D62D7BA75B00C0E17E /* BitcoinRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRate.swift; sourceTree = "<group>"; };
 		8284BEF72D7E3B7400036350 /* BitcoinRateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRateStore.swift; sourceTree = "<group>"; };
-		8284BEF82D7E3B7400036350 /* LocalBitcoinRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBitcoinRate.swift; sourceTree = "<group>"; };
 		8284BEF92D7E3B7400036350 /* LocalBitcoinRateLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalBitcoinRateLoader.swift; sourceTree = "<group>"; };
 		8284BEFB2D7E3B7400036350 /* TransactionsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsStore.swift; sourceTree = "<group>"; };
 		8284BEFD2D7E3B7400036350 /* CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelpers.swift; sourceTree = "<group>"; };
@@ -139,6 +140,9 @@
 		8284BF642D7FB23100036350 /* TransactionsUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsUIComposer.swift; sourceTree = "<group>"; };
 		8284BF652D7FB23100036350 /* TransactionsViewAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewAdapter.swift; sourceTree = "<group>"; };
 		8284BF6F2D80226C00036350 /* TransactionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSection.swift; sourceTree = "<group>"; };
+		8284BF712D8025DF00036350 /* BalanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceStore.swift; sourceTree = "<group>"; };
+		8284BF752D8026C200036350 /* Balance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Balance.swift; sourceTree = "<group>"; };
+		8284BF772D8026FB00036350 /* CoreDataTransactionsStore+BalanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataTransactionsStore+BalanceStore.swift"; sourceTree = "<group>"; };
 		82AFEC952D7B0C3C006CF875 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		82AFEC962D7B0C3C006CF875 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82AFEC9C2D7B0C3C006CF875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -235,7 +239,7 @@
 		1CA3B66E2D22B0F600176711 /* TransactionsTestTaskTests */ = {
 			isa = PBXGroup;
 			children = (
-				1CA3B66F2D22B0F600176711 /* TransactionsTestTaskTests.swift */,
+				1CA3B66F2D22B0F600176711 /* AnalyticsServiceTests.swift */,
 			);
 			path = TransactionsTestTaskTests;
 			sourceTree = "<group>";
@@ -294,6 +298,7 @@
 			isa = PBXGroup;
 			children = (
 				822B33D62D7BA75B00C0E17E /* BitcoinRate.swift */,
+				8284BF752D8026C200036350 /* Balance.swift */,
 			);
 			path = Feature;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 		8284BEF62D7E3B7400036350 /* Balance */ = {
 			isa = PBXGroup;
 			children = (
+				8284BF712D8025DF00036350 /* BalanceStore.swift */,
 			);
 			path = Balance;
 			sourceTree = "<group>";
@@ -309,8 +315,6 @@
 			isa = PBXGroup;
 			children = (
 				8284BEF72D7E3B7400036350 /* BitcoinRateStore.swift */,
-				8284BEF82D7E3B7400036350 /* LocalBitcoinRate.swift */,
-				8284BEF92D7E3B7400036350 /* LocalBitcoinRateLoader.swift */,
 			);
 			path = BitcoinRate;
 			sourceTree = "<group>";
@@ -319,6 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				8284BEFB2D7E3B7400036350 /* TransactionsStore.swift */,
+				8284BEF92D7E3B7400036350 /* LocalBitcoinRateLoader.swift */,
 			);
 			path = Transaction;
 			sourceTree = "<group>";
@@ -333,6 +338,7 @@
 				8284BEFE2D7E3B7400036350 /* CoreDataTransactionsStore.swift */,
 				8284BEFF2D7E3B7400036350 /* CoreDataTransactionsStore+BitcoinRateStore.swift */,
 				8284BF002D7E3B7400036350 /* CoreDataTransactionsStore+TransactionsStore.swift */,
+				8284BF772D8026FB00036350 /* CoreDataTransactionsStore+BalanceStore.swift */,
 				8284BF012D7E3B7400036350 /* ManagedBitcoinRate.swift */,
 				8284BF022D7E3B7400036350 /* ManagedTransaction.swift */,
 				8284BF032D7E3B7400036350 /* Transactions.xcdatamodeld */,
@@ -678,14 +684,15 @@
 				820CEBCA2D7B370A00D5C8A3 /* UIStackView+Alignment.swift in Sources */,
 				0DF1D1472D22DD4A001626E7 /* AnalyticsService.swift in Sources */,
 				8284BF072D7E3B7400036350 /* BitcoinRateStore.swift in Sources */,
-				8284BF082D7E3B7400036350 /* LocalBitcoinRate.swift in Sources */,
 				8284BF092D7E3B7400036350 /* LocalBitcoinRateLoader.swift in Sources */,
+				8284BF722D8025DF00036350 /* BalanceStore.swift in Sources */,
 				8284BF0A2D7E3B7400036350 /* TransactionsStore.swift in Sources */,
 				8284BF4F2D7F8FEB00036350 /* AddTransactionViewController.swift in Sources */,
 				8284BF0B2D7E3B7400036350 /* CoreDataHelpers.swift in Sources */,
 				8284BF0C2D7E3B7400036350 /* CoreDataTransactionsStore.swift in Sources */,
 				8284BF0D2D7E3B7400036350 /* CoreDataTransactionsStore+BitcoinRateStore.swift in Sources */,
 				8284BF0E2D7E3B7400036350 /* CoreDataTransactionsStore+TransactionsStore.swift in Sources */,
+				8284BF782D8026FB00036350 /* CoreDataTransactionsStore+BalanceStore.swift in Sources */,
 				8284BF0F2D7E3B7400036350 /* ManagedBitcoinRate.swift in Sources */,
 				8284BF102D7E3B7400036350 /* ManagedTransaction.swift in Sources */,
 				8284BF5B2D7FB22D00036350 /* AddTransactionPresenter.swift in Sources */,
@@ -701,6 +708,7 @@
 				820CEBE92D7B5F5400D5C8A3 /* TransactionsPresenter.swift in Sources */,
 				1CA3B6562D22B0F500176711 /* AppDelegate.swift in Sources */,
 				8284BF142D7E3B9800036350 /* Transaction.swift in Sources */,
+				8284BF762D8026C200036350 /* Balance.swift in Sources */,
 				82E91CD82D7B70AF00C37DBB /* HTTPClient.swift in Sources */,
 				82E91CD92D7B70AF00C37DBB /* URLSessionHTTPClient.swift in Sources */,
 				820CEBE52D7B5F5400D5C8A3 /* TransactionsDiffableTableDataSource.swift in Sources */,
@@ -720,7 +728,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CA3B6702D22B0F600176711 /* TransactionsTestTaskTests.swift in Sources */,
+				1CA3B6702D22B0F600176711 /* AnalyticsServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
