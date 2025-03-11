@@ -10,7 +10,7 @@ import UIKit
 final class AddTransactionViewController: NiblessViewController {
     var didAddTransaction: ((String, String) -> Void)?
     var didEnterAmount: ((String) -> Void)?
-    var didMoveToParent: (() -> Void)?
+    var viewDidDissapear: (() -> Void)?
     
     private let addTransactionLabel: UILabel = {
         let label = UILabel()
@@ -51,11 +51,11 @@ final class AddTransactionViewController: NiblessViewController {
         addTransactionButton.addTarget(self, action: #selector(didTapAddTransactionButton), for: .touchUpInside)
     }
     
-    override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        didMoveToParent?()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        viewDidDissapear?()
     }
-    
+
     private func setupViews() {
         view.backgroundColor = .white
         categoryPickerView.dataSource = self

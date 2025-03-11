@@ -24,7 +24,7 @@ final class AddTransactionPresentationAdapter {
         presenter?.didEnter(amount: amount)
     }
     
-    func didMoveToParent() {
-//        resultSubject.send(completion: .finished)
+    func viewDidDissappear() {
+        resultSubject.send(completion: .finished)
     }
 }

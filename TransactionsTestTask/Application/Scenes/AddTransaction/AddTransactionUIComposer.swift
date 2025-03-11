@@ -13,7 +13,7 @@ enum AddTransactionUIComposer {
         let presentationAdapter = AddTransactionPresentationAdapter()
         controller.didAddTransaction = presentationAdapter.didAddTransaction
         controller.didEnterAmount = presentationAdapter.didEnter(amount:)
-        controller.didMoveToParent = presentationAdapter.didMoveToParent
+        controller.viewDidDissapear = presentationAdapter.viewDidDissappear
         presentationAdapter.presenter = AddTransactionPresenter(
             view: WeakRefVirtualProxy(controller)
         )
