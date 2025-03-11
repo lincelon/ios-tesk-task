@@ -11,16 +11,6 @@ protocol TransactionsViewControllerDelegate {
     func didTapDepositButton()
 }
 
-struct TransactionsSection: Hashable {
-    let kind: Kind
-    let items: [CellController]
-    
-    enum Kind: Hashable {
-        case regular(date: Date)
-        case loadMore
-    }
-}
-
 final class TransactionsViewController: NiblessViewController {
     private let tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .insetGrouped)
@@ -30,6 +20,8 @@ final class TransactionsViewController: NiblessViewController {
         view.alwaysBounceVertical = false
         view.allowsSelection = false
         view.backgroundColor = .systemGray6
+        view.layer.cornerRadius = 32
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         return view
     }()
     
@@ -107,6 +99,13 @@ final class TransactionsViewController: NiblessViewController {
             ]
         )
         descriptionStackView.spacing = 16
+        descriptionStackView.isLayoutMarginsRelativeArrangement = true
+        descriptionStackView.layoutMargins = .init(
+            top: 0,
+            left: 16,
+            bottom: 16,
+            right: 16
+        )
         let mainStackView = UIVerticalStackView(
             arrangedSubviews: [
                 descriptionStackView,
@@ -135,6 +134,10 @@ final class TransactionsViewController: NiblessViewController {
             snapshot.appendItems(section.items, toSection: section)
         }
         dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func display(_ formattedBitcoinRate: String) {
+        bitcoinRateLabel.text = formattedBitcoinRate
     }
 }
 

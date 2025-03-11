@@ -57,6 +57,7 @@
 		8284BF6C2D7FB23100036350 /* TransactionsPresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF632D7FB23100036350 /* TransactionsPresentationAdapter.swift */; };
 		8284BF6D2D7FB23100036350 /* TransactionsUIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF642D7FB23100036350 /* TransactionsUIComposer.swift */; };
 		8284BF6E2D7FB23100036350 /* TransactionsViewAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF652D7FB23100036350 /* TransactionsViewAdapter.swift */; };
+		8284BF702D80226C00036350 /* TransactionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8284BF6F2D80226C00036350 /* TransactionSection.swift */; };
 		82AFEC992D7B0C3C006CF875 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC952D7B0C3C006CF875 /* Assets.xcassets */; };
 		82AFEC9A2D7B0C3C006CF875 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC972D7B0C3C006CF875 /* LaunchScreen.storyboard */; };
 		82AFEC9B2D7B0C3C006CF875 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 82AFEC962D7B0C3C006CF875 /* Base */; };
@@ -137,6 +138,7 @@
 		8284BF632D7FB23100036350 /* TransactionsPresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsPresentationAdapter.swift; sourceTree = "<group>"; };
 		8284BF642D7FB23100036350 /* TransactionsUIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsUIComposer.swift; sourceTree = "<group>"; };
 		8284BF652D7FB23100036350 /* TransactionsViewAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewAdapter.swift; sourceTree = "<group>"; };
+		8284BF6F2D80226C00036350 /* TransactionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSection.swift; sourceTree = "<group>"; };
 		82AFEC952D7B0C3C006CF875 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		82AFEC962D7B0C3C006CF875 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82AFEC9C2D7B0C3C006CF875 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				8284BF482D7F8FAC00036350 /* Cells */,
 				820CEBE02D7B5F5400D5C8A3 /* TransactionsDiffableTableDataSource.swift */,
 				820CEBE12D7B5F5400D5C8A3 /* TransactionsViewController.swift */,
+				8284BF6F2D80226C00036350 /* TransactionSection.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -704,6 +707,7 @@
 				820CEBE62D7B5F5400D5C8A3 /* TransactionsViewController.swift in Sources */,
 				8284BF382D7F0CC700036350 /* Paginated.swift in Sources */,
 				1CA3B6582D22B0F500176711 /* SceneDelegate.swift in Sources */,
+				8284BF702D80226C00036350 /* TransactionSection.swift in Sources */,
 				8284BF492D7F8FAC00036350 /* LoadMoreCell.swift in Sources */,
 				8284BF4A2D7F8FAC00036350 /* LoadMoreCellController.swift in Sources */,
 				8284BF4B2D7F8FAC00036350 /* TransactionCell.swift in Sources */,

@@ -11,11 +11,11 @@ struct TransactionViewModel {
     let transaction: Transaction
     
     var amount: String {
-        String(transaction.amount)
+        String(transaction.amount.formatted(.number.precision(.fractionLength(0...4))))
     }
     
     var category: String {
-        transaction.category.rawValue
+        transaction.category.rawValue.capitalized
     }
     
     var formattedDate: String {
@@ -23,7 +23,7 @@ struct TransactionViewModel {
     }
     
     var amountTextColor: UIColor {
-        transaction.category == .deposit ? .green : .black
+        transaction.category == .deposit ? .green : .red
     }
 }
 

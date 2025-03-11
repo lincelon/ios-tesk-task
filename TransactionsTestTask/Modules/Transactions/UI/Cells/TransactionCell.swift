@@ -10,7 +10,7 @@ import UIKit
 final class TransactionCell: UITableViewCell {
     let amountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .systemFont(ofSize: 17, weight: .medium)
         label.textColor = .black
         return label
     }()
@@ -46,6 +46,7 @@ final class TransactionCell: UITableViewCell {
                 categoryLabel
             ]
         )
+        amountAndCategoryStackView.spacing = 8
         let mainStackView = UIHorizontalStackView(
             arrangedSubviews: [
                 amountAndCategoryStackView,
