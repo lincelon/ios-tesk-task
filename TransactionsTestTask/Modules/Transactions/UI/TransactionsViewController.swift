@@ -34,7 +34,6 @@ final class TransactionsViewController: NiblessViewController {
     
     private let yourBTCBalanceLabel: UILabel = {
         let label = UILabel()
-        label.text = "Your BTC Balance"
         label.textColor = .gray
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 28, weight: .heavy)
@@ -58,7 +57,6 @@ final class TransactionsViewController: NiblessViewController {
     
     private let addTransactionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Add Transaction", for: .normal)
         return button
     }()
     
@@ -141,6 +139,11 @@ final class TransactionsViewController: NiblessViewController {
     
     func display(balance: String) {
         balanceAmountLabel.text = balance
+    }
+    
+    func set(title: String, addTransactionButtonTitle: String) {
+        yourBTCBalanceLabel.text = title
+        addTransactionButton.setTitle(addTransactionButtonTitle, for: .normal)
     }
 }
 

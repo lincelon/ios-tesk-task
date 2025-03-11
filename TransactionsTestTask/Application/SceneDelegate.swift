@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         do {
             let storeURL = NSPersistentContainer
                 .defaultDirectoryURL()
-                .appendingPathComponent("feed-store.sqlite")
+                .appendingPathComponent("obrio-store.sqlite")
             return try CoreDataTransactionsStore(
                 storeURL: storeURL
             )
@@ -78,12 +78,12 @@ private extension SceneDelegate {
         let (controller, result) = AddTransactionUIComposer.compose()
         navigationController.pushViewController(controller, animated: true)
         return result
+            .caching(to: store)
             .handleEvents(
                 receiveOutput: { [navigationController] _ in
                     navigationController.popViewController(animated: true)
                 }
             )
-            .caching(to: store)
             .eraseToAnyPublisher()
     }
     

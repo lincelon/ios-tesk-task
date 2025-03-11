@@ -12,6 +12,7 @@ enum Insertion {
     case append
 }
 
+
 protocol TransactionsView {
     func display(_ transactions: Paginated<Transaction>, insertion: Insertion)
     func display(_ transaction: Transaction)
@@ -21,7 +22,9 @@ protocol TransactionsView {
 
 final class TransactionsPresenter {
     private let view: TransactionsView
-
+    static let addTransactionTitle: String = "Add transaction"
+    static let youBTCBalance: String = "You BTC balance"
+    
     init(view: TransactionsView) {
         self.view = view
     }

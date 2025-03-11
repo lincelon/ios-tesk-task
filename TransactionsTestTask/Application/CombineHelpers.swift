@@ -61,14 +61,6 @@ extension HTTPClient {
             }
         }
         .handleEvents(
-            receiveCompletion: {
-                switch $0 {
-                case .finished:
-                    print("xxxx1")
-                case let .failure(error):
-                    print("xxxx2", error.localizedDescription)
-                }
-            },
             receiveCancel: { task?.cancel() }
         )
         .eraseToAnyPublisher()

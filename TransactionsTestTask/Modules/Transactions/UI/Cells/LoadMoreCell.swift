@@ -8,9 +8,8 @@
 import UIKit
 
 final class LoadMoreCell: UITableViewCell {
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Hello"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -19,10 +18,12 @@ final class LoadMoreCell: UITableViewCell {
      
         addSubview(titleLabel)
         
-        NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+                titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ]
+        )
     }
     
     required init?(coder: NSCoder) {

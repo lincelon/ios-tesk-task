@@ -25,6 +25,7 @@ enum TransactionsUIComposer {
         let controller = TransactionsViewController(
             delegate: presentationAdapter
         )
+        controller.set(title: TransactionsPresenter.youBTCBalance, addTransactionButtonTitle: TransactionsPresenter.addTransactionTitle)
         presentationAdapter.presenter = TransactionsPresenter(
             view: TransactionsViewAdapter(
                 controller: controller
