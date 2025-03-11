@@ -10,6 +10,7 @@ import UIKit
 extension UIStackView {
     func withVerticalAlignmnet(_ alignment: UIStackView.Alignment, customization: ((UIStackView) -> Void)? = nil) -> UIStackView {
         let alignmentStackView = UIStackView(arrangedSubviews: [self])
+        alignmentStackView.translatesAutoresizingMaskIntoConstraints = false
         alignmentStackView.axis = .horizontal
         alignmentStackView.alignment = alignment
         customization?(self)
@@ -18,6 +19,7 @@ extension UIStackView {
     
     func withHorizonalAlignmnet(_ alignment: UIStackView.Alignment, customization: ((UIStackView) -> Void)? = nil) -> UIStackView {
         let alignmentStackView = UIStackView(arrangedSubviews: [self])
+        alignmentStackView.translatesAutoresizingMaskIntoConstraints = false
         alignmentStackView.axis = .vertical
         alignmentStackView.alignment = alignment
         customization?(self)

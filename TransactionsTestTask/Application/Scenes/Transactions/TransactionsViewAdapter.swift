@@ -35,11 +35,7 @@ final class TransactionsViewAdapter: TransactionsView {
         
         let cellControllers = transactions.items.map { transaction in
              let view = TransactionCellController(
-                viewModel: .init(
-                    date: transaction.date,
-                    category: transaction.category.rawValue,
-                    amount: transaction.amount
-                )
+                viewModel: .init(transaction: transaction)
             )
             let cellController = CellController(id: transaction, view)
             return cellController
@@ -102,8 +98,16 @@ final class TransactionsViewAdapter: TransactionsView {
             }
             return Date()
         }
-        return grouped.map { .init(kind: .regular(date: $0), items: $1)}
+        return grouped
+            .map { .init(kind: .regular(date: $0), items: $1) }
+            .sorted { left, right in
+                if
+                    case let .regular(leftDate) = left.kind,
+                    case let .regular(rightDate) = right.kind {
+                    return leftDate > rightDate
+                } else {
+                    return false
+                }
+            }
     }
 }
-
-

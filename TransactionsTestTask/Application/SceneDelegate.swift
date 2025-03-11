@@ -59,6 +59,7 @@ private extension SceneDelegate {
         TransactionsUIComposer.compose(
             bitcoinRateUpdater: makeBitcoinRateUpdater,
             depoist: showDepositScene,
+            addTransaction: showAddTransactionScene,
             transactionsLoader: makeTansactionsLoader
         )
     }
@@ -67,6 +68,19 @@ private extension SceneDelegate {
         let (controller, result) = DepositUIComposer.compose()
         navController.present(controller, animated: true)
         return result
+            .caching(to: store)
+            .eraseToAnyPublisher()
+    }
+    
+    func showAddTransactionScene() -> AnyPublisher<Transaction, Never> {
+        let (controller, result) = AddTransactionUIComposer.compose()
+        navController.pushViewController(controller, animated: true)
+        return result
+            .handleEvents(
+                receiveOutput: { [navController] _ in
+                    navController.popViewController(animated: true)
+                }
+            )
             .caching(to: store)
             .eraseToAnyPublisher()
     }

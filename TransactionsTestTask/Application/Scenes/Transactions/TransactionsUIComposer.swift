@@ -11,10 +11,12 @@ enum TransactionsUIComposer {
     static func compose(
         bitcoinRateUpdater: @escaping () -> AnyPublisher<BitcoinRate, Error>,
         depoist: @escaping () -> AnyPublisher<Transaction, Never>,
+        addTransaction: @escaping () -> AnyPublisher<Transaction, Never>,
         transactionsLoader: @escaping (Int) -> AnyPublisher<Paginated<Transaction>, Error>
     ) -> TransactionsViewController {
         let presentationAdapter = TransactionsPresentationAdapter(
             depoist: depoist,
+            addTransaction: addTransaction,
             bitcoinRateUpdater: bitcoinRateUpdater,
             transactionsLoader: transactionsLoader
         )

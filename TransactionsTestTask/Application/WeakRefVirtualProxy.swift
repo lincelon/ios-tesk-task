@@ -38,3 +38,13 @@ extension WeakRefVirtualProxy: TransactionsViewControllerDelegate where T: Trans
         object?.didTapAddTransactionButton()
     }
 }
+
+extension WeakRefVirtualProxy: AddTransactionView where T: AddTransactionView {
+    func display(_ viewModel: AddTransactionViewModel) {
+        object?.display(viewModel)
+    }
+    
+    func setAddTransactionButtonEnabled(_ isEnabled: Bool) {
+        object?.setAddTransactionButtonEnabled(isEnabled)
+    }
+}

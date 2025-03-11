@@ -83,11 +83,7 @@ final class TransactionsViewController: NiblessViewController {
         super.viewDidLoad()
         setupViews()
         depositButton.addTarget(self, action: #selector(didTapDepositButton), for: .touchUpInside)
-    }
-    
-    @objc
-    func didTapDepositButton() {
-        delegate?.didTapDepositButton()
+        addTransactionButton.addTarget(self, action: #selector(didTapAddTransactionButton), for: .touchUpInside)
     }
     
     private func setupViews() {
@@ -123,7 +119,7 @@ final class TransactionsViewController: NiblessViewController {
                 mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 mainStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
                 mainStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-                mainStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                mainStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ]
         )
     }
@@ -140,19 +136,6 @@ final class TransactionsViewController: NiblessViewController {
         }
         dataSource.apply(snapshot, animatingDifferences: false)
     }
-    
-    func insert(
-        _ item: CellController,
-        beforeItem: CellController
-    ) {
-        var snapshot = dataSource.snapshot()
-        snapshot.insertItems([item], beforeItem: beforeItem)
-        dataSource.apply(snapshot, animatingDifferences: true)
-    }
-
-    func insert(_ section: TransactionsSection) {
-    
-    }
 }
 
 extension TransactionsViewController: UITableViewDelegate {
@@ -162,5 +145,17 @@ extension TransactionsViewController: UITableViewDelegate {
         forRowAt indexPath: IndexPath
     ) {
         cellController(at: indexPath)?.delegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
+    }
+}
+
+private extension TransactionsViewController {
+    @objc
+    func didTapDepositButton() {
+        delegate?.didTapDepositButton()
+    }
+    
+    @objc
+    func didTapAddTransactionButton() {
+        delegate?.didTapAddTransactionButton()
     }
 }

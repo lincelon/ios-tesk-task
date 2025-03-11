@@ -12,22 +12,21 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
     var presenter: TransactionsPresenter?
     private var cancellables: Set<AnyCancellable> = []
     private let depoist: () -> AnyPublisher<Transaction, Never>
+    private let addTransaction: () -> AnyPublisher<Transaction, Never>
     
     init(
         depoist: @escaping () -> AnyPublisher<Transaction, Never>,
+        addTransaction: @escaping () -> AnyPublisher<Transaction, Never>,
         bitcoinRateUpdater: () -> AnyPublisher<BitcoinRate, Error>,
         transactionsLoader: (Int) -> AnyPublisher<Paginated<Transaction>, Error>
     ) {
         self.depoist = depoist
+        self.addTransaction = addTransaction
         
         bitcoinRateUpdater()
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { [unowned self] in
-                    if case let .failure(error) = $0 {
-                        print(error)
-                    }
-                },
+                receiveCompletion: { _ in },
                 receiveValue: { [unowned self] in
                     presenter?.didUpdateBitcounRate(with: $0)
                 }
@@ -37,11 +36,7 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
         transactionsLoader(.zero)
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { [unowned self] in
-                    if case let .failure(error) = $0 {
-                        print(error)
-                    }
-                },
+                receiveCompletion: { _ in },
                 receiveValue: { [unowned self] in
                     if !$0.items.isEmpty {
                         presenter?.didLoadTransactions($0)
@@ -52,7 +47,17 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
     }
     
     func didTapAddTransactionButton() {
-        
+        addTransaction()
+            .handleEvents(
+                receiveCompletion: {
+                    print("xxx", $0)
+                }
+            )
+            .sink { [unowned self] in
+                presenter?.didRecieveTransaction($0)
+            }
+            .store(in: &cancellables)
+            
     }
     
     func didTapDepositButton() {

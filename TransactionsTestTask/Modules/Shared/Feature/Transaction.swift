@@ -23,3 +23,5 @@ struct Transaction {
 }
 
 extension Transaction: Hashable { }
+
+extension Transaction.Category: CaseIterable { }

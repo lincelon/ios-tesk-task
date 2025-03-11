@@ -8,10 +8,25 @@
 import UIKit
 
 final class TransactionCell: UITableViewCell {
-    let titleLabel: UILabel = {
+    let amountLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textColor = .black
+        return label
+    }()
+    
+    let categoryLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .gray
+        return label
+    }()
+    
+    
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .gray
         return label
     }()
     
@@ -25,25 +40,33 @@ final class TransactionCell: UITableViewCell {
     }
     
     private func setupViews() {
-        let stackView = UIHorizontalStackView(
+        let amountAndCategoryStackView = UIVerticalStackView(
             arrangedSubviews: [
-                titleLabel
+                amountLabel,
+                categoryLabel
             ]
         )
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = .init(
+        let mainStackView = UIHorizontalStackView(
+            arrangedSubviews: [
+                amountAndCategoryStackView,
+                dateLabel
+            ]
+        )
+        mainStackView.distribution = .equalSpacing
+        mainStackView.isLayoutMarginsRelativeArrangement = true
+        mainStackView.layoutMargins = .init(
             top: 16,
             left: 16,
             bottom: 16,
             right: 16
         )
-        addSubview(stackView)
+        addSubview(mainStackView)
         NSLayoutConstraint.activate(
             [
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                mainStackView.topAnchor.constraint(equalTo: topAnchor),
+                mainStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                mainStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                mainStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             ]
         )
     }

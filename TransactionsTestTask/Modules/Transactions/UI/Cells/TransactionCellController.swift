@@ -8,9 +8,23 @@
 import UIKit
 
 struct TransactionViewModel {
-    let date: Date
-    let category: String
-    let amount: Double
+    let transaction: Transaction
+    
+    var amount: String {
+        String(transaction.amount)
+    }
+    
+    var category: String {
+        transaction.category.rawValue
+    }
+    
+    var formattedDate: String {
+        transaction.date.formatted(date: .omitted, time: .standard)
+    }
+    
+    var amountTextColor: UIColor {
+        transaction.category == .deposit ? .green : .black
+    }
 }
 
 final class TransactionCellController: NSObject, UITableViewDataSource, UITableViewDelegate {
@@ -25,7 +39,10 @@ final class TransactionCellController: NSObject, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         cell = tableView.dequeueReusableCell()
-        cell?.titleLabel.text = String(viewModel.amount)
+        cell?.amountLabel.text = String(viewModel.amount)
+        cell?.dateLabel.text = String(viewModel.formattedDate)
+        cell?.amountLabel.textColor = viewModel.amountTextColor
+        cell?.categoryLabel.text = viewModel.category
         return cell ?? UITableViewCell()
     }
     

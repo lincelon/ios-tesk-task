@@ -13,7 +13,7 @@ extension UIAlertController {
         message: String,
         placeholder: String,
         cancelTitle: String,
-        cancelAction: @escaping () -> Void,
+        cancelAction: @escaping () -> (),
         primaryTitle: String,
         primaryAction: @escaping (String) -> ()
     ) -> UIAlertController {

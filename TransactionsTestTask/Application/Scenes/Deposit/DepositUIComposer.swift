@@ -16,7 +16,7 @@ enum DepositUIComposer {
             message: DepositPresenter.message,
             placeholder: DepositPresenter.placeholder,
             cancelTitle: DepositPresenter.cancelButtonTitle,
-            cancelAction: { },
+            cancelAction: presentationAdapter.didCancel,
             primaryTitle: DepositPresenter.receiveButtonTitle,
             primaryAction: presentationAdapter.didRecieveDeposit
         )

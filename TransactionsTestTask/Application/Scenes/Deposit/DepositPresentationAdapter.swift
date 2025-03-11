@@ -11,7 +11,7 @@ final class DepositPresentationAdapter {
     private let resultSubject = PassthroughSubject<Transaction, Never>()
 
     var result: AnyPublisher<Transaction, Never> {
-        resultSubject.eraseToAnyPublisher()
+        resultSubject.first().eraseToAnyPublisher()
     }
     
     func didRecieveDeposit(_ amount: String) {
@@ -21,5 +21,9 @@ final class DepositPresentationAdapter {
         else { return }
         let transaction = DepositPresenter.map(amount)
         resultSubject.send(transaction)
+    }
+    
+    func didCancel() {
+        resultSubject.send(completion: .finished)
     }
 }
