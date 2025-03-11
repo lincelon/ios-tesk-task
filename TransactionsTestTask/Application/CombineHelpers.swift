@@ -78,7 +78,7 @@ extension HTTPClient {
 extension BitcoinRateStore {
     typealias Publisher = AnyPublisher<BitcoinRate, Error>
     
-    func loadPublisher() -> Publisher {
+    func loadBitcoinRatePublisher() -> Publisher {
         Deferred {
             Future { completion in
                 completion(
@@ -92,10 +92,27 @@ extension BitcoinRateStore {
     }
 }
 
+extension BalanceStore {
+    typealias Publisher = AnyPublisher<Balance, Error>
+    
+    func loadBalancePublisher() -> Publisher {
+        Deferred {
+            Future { completion in
+                completion(
+                    Result {
+                        try self.balance() ?? .zero
+                    }
+                )
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
 extension LocalTransactionsLoader {
     typealias Publisher = AnyPublisher<(items: [Transaction], nextPage: Bool), Error>
     
-    func loadPublisher(offset: Int) -> Publisher {
+    func loadTransactionsPublisher(offset: Int) -> Publisher {
         Deferred {
             Future { completion in
                 completion(
@@ -123,6 +140,21 @@ extension TransactionsStore {
             }
         }
         .eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+    func track(in analyticsSetvice: AnalyticsService) -> AnyPublisher<Output, Failure> where Output == BitcoinRate {
+        handleEvents(
+            receiveOutput: { rate in
+                analyticsSetvice.trackEvent(
+                    name: "bitcoin-rate-update",
+                    parameters: [
+                        "rate": String(rate)
+                    ]
+                )
+            }
+        ).eraseToAnyPublisher()
     }
 }
 

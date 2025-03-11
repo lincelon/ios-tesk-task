@@ -8,6 +8,6 @@
 import Foundation
 
 protocol BitcoinRateStore {
-    func save(_ localBitcoinRate: LocalBitcoinRate) throws
-    func retrieve() throws -> LocalBitcoinRate?
+    func save(_ bitcoinRate: BitcoinRate) throws
+    func retrieve() throws -> BitcoinRate?
 }

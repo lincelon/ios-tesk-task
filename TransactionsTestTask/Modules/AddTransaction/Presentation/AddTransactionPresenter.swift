@@ -37,7 +37,7 @@ final class AddTransactionPresenter {
     
     static func map(amount: String, category: String) -> Transaction {
         Transaction(
-            amount: Double(amount) ?? .zero,
+            amount: -(Double(amount) ?? .zero),
             date: .now,
             category: .init(rawValue: category) ?? .other
         )

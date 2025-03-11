@@ -84,9 +84,14 @@ final class TransactionsViewAdapter: TransactionsView {
         controller.display(sections)
     }
         
-    func display(_ formattedBitcoinRate: String) {
+    func display(formattedBitcoinRate: String) {
         guard let controller else { return }
-        controller.display(formattedBitcoinRate)
+        controller.display(formattedBitcoinRate: formattedBitcoinRate)
+    }
+    
+    func display(balance: String) {
+        guard let controller else { return }
+        controller.display(balance: balance)
     }
     
     private func group(_ cellControllers : [CellController]) -> [TransactionsSection] {

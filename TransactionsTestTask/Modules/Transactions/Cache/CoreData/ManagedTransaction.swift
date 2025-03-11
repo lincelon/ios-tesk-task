@@ -36,4 +36,20 @@ extension ManagedTransaction {
         let count = try context.count(for: request)
         return count
     }
+    
+    static func balance(in context: NSManagedObjectContext) throws -> Balance? {
+        let keypathExp = NSExpression(forKeyPath: "amount")
+        let expression = NSExpression(forFunction: "sum:", arguments: [keypathExp])
+        let amountDescription = NSExpressionDescription()
+        amountDescription.expression = expression
+        amountDescription.name = "amount"
+        amountDescription.expressionResultType = .doubleAttributeType
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: entity().name!)
+        request.returnsObjectsAsFaults = false
+        request.propertiesToFetch = [amountDescription]
+        request.resultType = .dictionaryResultType
+        let result = try context.fetch(request)
+        let amount = (result.first as? Dictionary<String, Double>)?["amount"]
+        return amount
+    }
 }

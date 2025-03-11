@@ -13,15 +13,18 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
     private var cancellables: Set<AnyCancellable> = []
     private let depoist: () -> AnyPublisher<Transaction, Never>
     private let addTransaction: () -> AnyPublisher<Transaction, Never>
+    private let balanceLoader: () -> AnyPublisher<Balance, Error>
     
     init(
         depoist: @escaping () -> AnyPublisher<Transaction, Never>,
         addTransaction: @escaping () -> AnyPublisher<Transaction, Never>,
         bitcoinRateUpdater: () -> AnyPublisher<BitcoinRate, Error>,
-        transactionsLoader: (Int) -> AnyPublisher<Paginated<Transaction>, Error>
+        transactionsLoader: (Int) -> AnyPublisher<Paginated<Transaction>, Error>,
+        balanceLoader: @escaping () -> AnyPublisher<Balance, Error>
     ) {
         self.depoist = depoist
         self.addTransaction = addTransaction
+        self.balanceLoader = balanceLoader
         
         bitcoinRateUpdater()
             .receive(on: DispatchQueue.main)
@@ -44,27 +47,53 @@ final class TransactionsPresentationAdapter: TransactionsViewControllerDelegate 
                 }
             )
             .store(in: &cancellables)
+        
+        balanceLoader()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [unowned self] in
+                    presenter?.didUpdate(balance: $0)
+                }
+            )
+            .store(in: &cancellables)
     }
     
     func didTapAddTransactionButton() {
         addTransaction()
             .handleEvents(
-                receiveCompletion: {
-                    print("xxx", $0)
+                receiveOutput: { [unowned self] in
+                    presenter?.didRecieveTransaction($0)
                 }
             )
-            .sink { [unowned self] in
-                presenter?.didRecieveTransaction($0)
+            .flatMap { [unowned self] _ in
+                balanceLoader()
             }
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [unowned self] in
+                    presenter?.didUpdate(balance: $0)
+                }
+            )
             .store(in: &cancellables)
-            
     }
     
     func didTapDepositButton() {
         depoist()
-            .sink { [unowned self] in
-                presenter?.didRecieveTransaction($0)
+            .handleEvents(
+                receiveOutput: { [unowned self] in
+                    presenter?.didRecieveTransaction($0)
+                }
+            )
+            .flatMap { [unowned self] _ in
+                balanceLoader()
             }
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [unowned self] in
+                    presenter?.didUpdate(balance: $0)
+                }
+            )
             .store(in: &cancellables)
     }
 }

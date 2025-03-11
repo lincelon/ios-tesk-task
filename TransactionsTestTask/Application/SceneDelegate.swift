@@ -21,12 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         attributes: .concurrent
     )
     
-    private lazy var navController: UINavigationController = {
-        let navController = UINavigationController(rootViewController: makeTransactionsScene())
-        return navController
+    private lazy var navigationController: UINavigationController = {
+        let navigationController = UINavigationController(rootViewController: makeTransactionsScene())
+        return navigationController
     }()
     
-    private let store: BitcoinRateStore & TransactionsStore = {
+    private let store: BitcoinRateStore & TransactionsStore & BalanceStore = {
         do {
             let storeURL = NSPersistentContainer
                 .defaultDirectoryURL()
@@ -41,6 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }()
     
     private lazy var localTransactionsLoader = LocalTransactionsLoader(store: store)
+    private lazy var analyticsService: AnalyticsService = AnalyticsServiceImp()
     
     func scene(
         _ scene: UIScene,
@@ -49,7 +50,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = navController
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
 }
@@ -57,16 +58,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 private extension SceneDelegate {
     func makeTransactionsScene() -> UIViewController {
         TransactionsUIComposer.compose(
-            bitcoinRateUpdater: makeBitcoinRateUpdater,
             depoist: showDepositScene,
             addTransaction: showAddTransactionScene,
-            transactionsLoader: makeTansactionsLoader
+            bitcoinRateUpdater: makeBitcoinRateUpdater,
+            transactionsLoader: makeTansactionsLoader,
+            balanceLoader: makeBalanceLoader
         )
     }
     
     func showDepositScene() -> AnyPublisher<Transaction, Never> {
         let (controller, result) = DepositUIComposer.compose()
-        navController.present(controller, animated: true)
+        navigationController.present(controller, animated: true)
         return result
             .caching(to: store)
             .eraseToAnyPublisher()
@@ -74,11 +76,11 @@ private extension SceneDelegate {
     
     func showAddTransactionScene() -> AnyPublisher<Transaction, Never> {
         let (controller, result) = AddTransactionUIComposer.compose()
-        navController.pushViewController(controller, animated: true)
+        navigationController.pushViewController(controller, animated: true)
         return result
             .handleEvents(
-                receiveOutput: { [navController] _ in
-                    navController.popViewController(animated: true)
+                receiveOutput: { [navigationController] _ in
+                    navigationController.popViewController(animated: true)
                 }
             )
             .caching(to: store)
@@ -86,10 +88,8 @@ private extension SceneDelegate {
     }
     
     func makeTansactionsLoader(offset: Int = .zero) -> AnyPublisher<Paginated<Transaction>, Error> {
-        localTransactionsLoader.loadPublisher(offset: offset)
-            .map { transactions, isThereNextPage in
-                self.makePage(items: transactions, nextPage: isThereNextPage)
-            }
+        localTransactionsLoader.loadTransactionsPublisher(offset: offset)
+            .map(makePage)
             .eraseToAnyPublisher()
     }
     
@@ -109,17 +109,22 @@ private extension SceneDelegate {
     func makeRemoteBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
         let baseURL = URL(string: "https://api.coincap.io")!
         let url = TransactionsEndpoint.bitcoinRate.url(baseURL: baseURL)
-        
+        let twoMinutes: TimeInterval = 120
         return httpClient
             .getPublisher(url: url)
             .tryMap(BitcoinRateMapper.map)
             .caching(to: store)
-            .executePeriodically(every: 30)
+            .track(in: analyticsService)
+            .executePeriodically(every: twoMinutes)
             .subscribe(on: scheduler)
             .eraseToAnyPublisher()
     }
     
     func makeLocalBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
-        store.loadPublisher()
+        store.loadBitcoinRatePublisher()
+    }
+    
+    func makeBalanceLoader() -> AnyPublisher<Balance, Error> {
+        store.loadBalancePublisher()
     }
 }

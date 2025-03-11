@@ -45,7 +45,6 @@ final class TransactionsViewController: NiblessViewController {
         let label = UILabel()
         label.textColor = .black
         label.textAlignment = .center
-        label.text = "4003.21"
         label.font = .systemFont(ofSize: 24, weight: .bold)
         return label
     }()
@@ -136,8 +135,12 @@ final class TransactionsViewController: NiblessViewController {
         dataSource.apply(snapshot, animatingDifferences: false)
     }
     
-    func display(_ formattedBitcoinRate: String) {
+    func display(formattedBitcoinRate: String) {
         bitcoinRateLabel.text = formattedBitcoinRate
+    }
+    
+    func display(balance: String) {
+        balanceAmountLabel.text = balance
     }
 }
 

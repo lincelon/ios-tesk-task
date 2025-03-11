@@ -6,17 +6,18 @@
 //
 
 extension CoreDataTransactionsStore: BitcoinRateStore {
-    func save(_ localBitcoinRate: LocalBitcoinRate) throws {
+    func save(_ bitcoinRate: BitcoinRate) throws {
         try performSync { context in
             Result {
+                try ManagedBitcoinRate.find(in: context).map(context.delete).map(context.save)
                 let managedBitcoinRate = try ManagedBitcoinRate.newUniqueInstance(in: context) as ManagedBitcoinRate
-                managedBitcoinRate.value = localBitcoinRate
+                managedBitcoinRate.value = bitcoinRate                
                 try context.save()
             }
         }
     }
     
-    func retrieve() throws -> LocalBitcoinRate? {
+    func retrieve() throws -> BitcoinRate? {
         try performSync { context in
             Result {
                 try ManagedBitcoinRate.find(in: context)?.value

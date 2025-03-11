@@ -24,8 +24,12 @@ extension WeakRefVirtualProxy: TransactionsView where T: TransactionsView {
         object?.display(transaction)
     }
         
-    func display(_ formattedBitcoinRate: String) {
-        object?.display(formattedBitcoinRate)
+    func display(formattedBitcoinRate: String) {
+        object?.display(formattedBitcoinRate: formattedBitcoinRate)
+    }
+    
+    func display(balance: String) {
+        object?.display(balance: balance)
     }
 }
 

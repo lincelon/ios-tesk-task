@@ -7,25 +7,8 @@
 
 import Foundation
 
-class LocalBitcoinRateLoader {
-    private let store: BitcoinRateStore
-    
-    init(store: BitcoinRateStore) {
-        self.store = store
-    }
-}
-
-extension LocalBitcoinRateLoader {
-    func load() throws -> BitcoinRate {
-        if let bitcoinRate = try store.retrieve() {
-            return bitcoinRate
-        }
-        return .zero
-    }
-}
-
 class LocalTransactionsLoader {
-    private let limit: Int = 10
+    private let limit: Int = 20
     private let store: TransactionsStore
     
     init(store: TransactionsStore) {

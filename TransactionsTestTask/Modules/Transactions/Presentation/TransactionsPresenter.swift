@@ -15,7 +15,8 @@ enum Insertion {
 protocol TransactionsView {
     func display(_ transactions: Paginated<Transaction>, insertion: Insertion)
     func display(_ transaction: Transaction)
-    func display(_ formattedBitcoinRate: String)
+    func display(formattedBitcoinRate: String)
+    func display(balance: String)
 }
 
 final class TransactionsPresenter {
@@ -26,8 +27,8 @@ final class TransactionsPresenter {
     }
     
     func didUpdateBitcounRate(with rate: Double) {
-        let formattedRate = "1 BTC – $\(String(format: "%.2f", rate))"
-        view.display(formattedRate)
+        let formattedBitcoinRate = "1 BTC – $\(String(format: "%.2f", rate))"
+        view.display(formattedBitcoinRate: formattedBitcoinRate)
     }
     
     func didLoadTransactions(_ transactions: Paginated<Transaction>) {
@@ -36,5 +37,10 @@ final class TransactionsPresenter {
     
     func didRecieveTransaction(_ transaction: Transaction) {
         view.display(transaction)
+    }
+    
+    func didUpdate(balance: Balance) {
+        let balance = balance.formatted(.number.precision(.fractionLength(0...2)))
+        view.display(balance: balance)
     }
 }
