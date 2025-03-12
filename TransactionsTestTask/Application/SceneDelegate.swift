@@ -14,13 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private let httpClient: HTTPClient = {
         URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     }()
-    
-    private lazy var scheduler = DispatchQueue(
-        label: "com.obrio.queue",
-        qos: .userInitiated,
-        attributes: .concurrent
-    )
-    
+        
     private lazy var navigationController: UINavigationController = {
         let navigationController = UINavigationController(rootViewController: makeTransactionsScene())
         return navigationController
@@ -42,6 +36,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private lazy var localTransactionsLoader = LocalTransactionsLoader(store: store)
     private lazy var analyticsService: AnalyticsService = AnalyticsServiceImp()
+    private lazy var bitcoinRateUpdater: BicoinRateUdpdatable = BitcoinRateUdpdaterFacade(
+        httpClient: httpClient,
+        bitcoinRateStore: store,
+        analyticsService: analyticsService
+    )
     
     func scene(
         _ scene: UIScene,
@@ -101,27 +100,7 @@ private extension SceneDelegate {
     }
     
     func makeBitcoinRateUpdater() -> AnyPublisher<BitcoinRate, Error> {
-        makeLocalBitcoinRateLoader()
-            .merge(with: makeRemoteBitcoinRateLoader())
-            .eraseToAnyPublisher()
-    }
-    
-    func makeRemoteBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
-        let baseURL = URL(string: "https://api.coincap.io")!
-        let url = TransactionsEndpoint.bitcoinRate.url(baseURL: baseURL)
-        let twoMinutes: TimeInterval = 120
-        return httpClient
-            .getPublisher(url: url)
-            .tryMap(BitcoinRateMapper.map)
-            .caching(to: store)
-            .track(in: analyticsService)
-            .executePeriodically(every: twoMinutes)
-            .subscribe(on: scheduler)
-            .eraseToAnyPublisher()
-    }
-    
-    func makeLocalBitcoinRateLoader() -> AnyPublisher<BitcoinRate, Error> {
-        store.loadBitcoinRatePublisher()
+        bitcoinRateUpdater.update()
     }
     
     func makeBalanceLoader() -> AnyPublisher<Balance, Error> {

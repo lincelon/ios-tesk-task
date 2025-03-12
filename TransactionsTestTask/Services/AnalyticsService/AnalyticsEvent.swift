@@ -12,3 +12,5 @@ struct AnalyticsEvent {
     let parameters: [String: String]
     let date: Date
 }
+
+extension AnalyticsEvent: Equatable { }
